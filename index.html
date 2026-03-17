@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ASR-United - Équipe de Football</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            color: #fff;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 3rem;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            background: linear-gradient(45deg, #e94560, #ff6b6b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 30px rgba(233, 69, 96, 0.5);
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #a0a0a0;
+            margin-bottom: 40px;
+            font-size: 1.2rem;
+        }
+
+        .nav-tabs {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+
+        .tab-btn {
+            padding: 12px 24px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid #e94560;
+            color: #fff;
+            cursor: pointer;
+            border-radius: 30px;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .tab-btn:hover, .tab-btn.active {
+            background: #e94560;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(233, 69, 96, 0.4);
+        }
+
+        .content-section {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Section 1: Liste des joueurs */
+        .players-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .player-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(233, 69, 96, 0.3);
+            border-radius: 15px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .player-card:hover {
+            transform: translateX(10px);
+            background: rgba(233, 69, 96, 0.1);
+            border-color: #e94560;
+        }
+
+        .player-number {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #e94560, #ff6b6b);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(233, 69, 96, 0.4);
+        }
+
+        .player-info h3 {
+            color: #fff;
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+        }
+
+        .player-info p {
+            color: #a0a0a0;
+            font-size: 0.9rem;
+        }
+
+        /* Section 2: Formation tactique */
+        .formation-container {
+            background: linear-gradient(180deg, #2d5016 0%, #3d6b1f 50%, #2d5016 100%);
+            border-radius: 20px;
+            padding: 40px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        .formation-container::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 150px;
+            height: 150px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+        }
+
+        .formation-container::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 3px;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .field-line {
+            position: absolute;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .penalty-area-top {
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40%;
+            height: 20%;
+            border-top: none;
+        }
+
+        .penalty-area-bottom {
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40%;
+            height: 20%;
+            border-bottom: none;
+        }
+
+        .formation-4-3-3 {
+            display: grid;
+            grid-template-rows: repeat(4, 1fr);
+            gap: 30px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .formation-row {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+        }
+
+        .position-card {
+            background: rgba(106, 13, 173, 0.9);
+            border: 3px solid #fff;
+            border-radius: 15px;
+            padding: 15px 20px;
+            text-align: center;
+            min-width: 120px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            transition: transform 0.3s ease;
+        }
+
+        .position-card:hover {
+            transform: scale(1.1);
+        }
+
+        .position-card .jersey {
+            width: 60px;
+            height: 60px;
+            background: #6a0dad;
+            border-radius: 10px 10px 0 0;
+            margin: 0 auto 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            position: relative;
+        }
+
+        .position-card .jersey::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 100%;
+            height: 10px;
+            background: #6a0dad;
+            border-radius: 0 0 5px 5px;
+        }
+
+        .position-card h4 {
+            font-size: 1rem;
+            margin-bottom: 5px;
+            color: #fff;
+        }
+
+        .position-card p {
+            font-size: 0.8rem;
+            color: #ddd;
+        }
+
+        /* Section 3 & 4: Titulaires et Remplaçants */
+        .team-section {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .team-section h2 {
+            color: #e94560;
+            margin-bottom: 20px;
+            font-size: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .team-section h2::before {
+            content: '⚽';
+        }
+
+        .category {
+            margin-bottom: 25px;
+        }
+
+        .category h3 {
+            color: #ffd700;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+            border-left: 4px solid #e94560;
+            padding-left: 15px;
+        }
+
+        .players-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .player-tag {
+            background: linear-gradient(135deg, #6a0dad, #9b59b6);
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-size: 0.95rem;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .player-tag:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 20px rgba(106, 13, 173, 0.5);
+        }
+
+        /* Section 5: Maillots */
+        .jerseys-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 30px;
+            margin-top: 20px;
+        }
+
+        .jersey-display {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 30px 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .jersey-display:hover {
+            border-color: #e94560;
+            transform: translateY(-10px);
+        }
+
+        .jersey-svg {
+            width: 150px;
+            height: 180px;
+            margin: 0 auto 20px;
+            filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.5));
+        }
+
+        .jersey-info h4 {
+            color: #fff;
+            font-size: 1.2rem;
+            margin-bottom: 5px;
+        }
+
+        .jersey-info p {
+            color: #e94560;
+            font-size: 1rem;
+            font-weight: bold;
+        }
+
+        .jersey-number-big {
+            font-size: 3rem;
+            color: #ffd700;
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            padding: 20px;
+            color: #666;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 2rem; }
+            .formation-container { padding: 20px; }
+            .position-card { min-width: 100px; padding: 10px; }
+            .jerseys-container { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
+        }
+    </style>
+<base target="_blank">
+</head>
+<body>
+    <div class="container">
+        <h1>ASR-United</h1>
+        <p class="subtitle">Salle TP1 - ASR 3</p>
+
+        <div class="nav-tabs">
+            <button class="tab-btn active" onclick="showSection('all-players')">📋 Tous les Joueurs</button>
+            <button class="tab-btn" onclick="showSection('formation')">⚽ Formation</button>
+            <button class="tab-btn" onclick="showSection('starters')">🥇 11 Entrants</button>
+            <button class="tab-btn" onclick="showSection('substitutes')">🔄 Remplaçants</button>
+            <button class="tab-btn" onclick="showSection('jerseys')">👕 Maillots</button>
+        </div>
+
+        <!-- Section 1: Tous les joueurs -->
+        <div id="all-players" class="content-section active">
+            <h2 style="text-align: center; margin-bottom: 30px; color: #e94560;">Liste Complète des Joueurs (18)</h2>
+            <div class="players-grid" id="players-grid"></div>
+        </div>
+
+        <!-- Section 2: Formation -->
+        <div id="formation" class="content-section">
+            <h2 style="text-align: center; margin-bottom: 30px; color: #e94560;">Formation Tactique 4-3-3</h2>
+            <div class="formation-container">
+                <div class="field-line penalty-area-top"></div>
+                <div class="field-line penalty-area-bottom"></div>
+                <div class="formation-4-3-3">
+                    <div class="formation-row">
+                        <div class="position-card">
+                            <div class="jersey">🧤</div>
+                            <h4>Elom</h4>
+                            <p>Gardien</p>
+                        </div>
+                    </div>
+                    <div class="formation-row">
+                        <div class="position-card">
+                            <div class="jersey">🛡️</div>
+                            <h4>Hope</h4>
+                            <p>Latéral-Gauche</p>
+                        </div>
+                        <div class="position-card">
+                            <div class="jersey">🛡️</div>
+                            <h4>Géoffroy</h4>
+                            <p>Libéro</p>
+                        </div>
+                        <div class="position-card">
+                            <div class="jersey">🛡️</div>
+                            <h4>Gédéon</h4>
+                            <p>Stoppeur</p>
+                        </div>
+                        <div class="position-card">
+                            <div class="jersey">🛡️</div>
+                            <h4>Bilal</h4>
+                            <p>Latéral-Droit</p>
+                        </div>
+                    </div>
+                    <div class="formation-row">
+                        <div class="position-card">
+                            <div class="jersey">⚡</div>
+                            <h4>Bienvenu</h4>
+                            <p>Offensif</p>
+                        </div>
+                        <div class="position-card">
+                            <div class="jersey">⚡</div>
+                            <h4>Josué</h4>
+                            <p>Défensif</p>
+                        </div>
+                        <div class="position-card">
+                            <div class="jersey">⚡</div>
+                            <h4>Rayane</h4>
+                            <p>Offensif</p>
+                        </div>
+                    </div>
+                    <div class="formation-row">
+                        <div class="position-card">
+                            <div class="jersey">🔥</div>
+                            <h4>Casmir</h4>
+                            <p>Élier-Gauche</p>
+                        </div>
+                        <div class="position-card">
+                            <div class="jersey">🔥</div>
+                            <h4>Nicaise</h4>
+                            <p>De-Point</p>
+                        </div>
+                        <div class="position-card">
+                            <div class="jersey">🔥</div>
+                            <h4>Elie</h4>
+                            <p>Élier-Droit</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 3: 11 Entrants -->
+        <div id="starters" class="content-section">
+            <div class="team-section">
+                <h2>Les 11 Entrants (Titulaires)</h2>
+
+                <div class="category">
+                    <h3>🥅 Gardien</h3>
+                    <div class="players-list">
+                        <span class="player-tag">Elom (Gardien)</span>
+                    </div>
+                </div>
+
+                <div class="category">
+                    <h3>🛡️ Défenseurs</h3>
+                    <div class="players-list">
+                        <span class="player-tag">Géoffroy (Libéro)</span>
+                        <span class="player-tag">Gédéon (Stoppeur)</span>
+                        <span class="player-tag">Hope (Latéral-Gauche)</span>
+                        <span class="player-tag">Bilal (Latéral-Droit)</span>
+                    </div>
+                </div>
+
+                <div class="category">
+                    <h3>⚡ Milieux</h3>
+                    <div class="players-list">
+                        <span class="player-tag">Josué (Défensif)</span>
+                        <span class="player-tag">Bienvenu (Offensif)</span>
+                        <span class="player-tag">Rayane (Offensif)</span>
+                    </div>
+                </div>
+
+                <div class="category">
+                    <h3>🔥 Attaquants</h3>
+                    <div class="players-list">
+                        <span class="player-tag">Casmir (Élier-Gauche)</span>
+                        <span class="player-tag">Elie (Élier-Droit)</span>
+                        <span class="player-tag">Nicaise (De-Point)</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 4: Remplaçants -->
+        <div id="substitutes" class="content-section">
+            <div class="team-section">
+                <h2>Les 6 Remplaçants</h2>
+
+                <div class="category">
+                    <h3>🥅 Gardien</h3>
+                    <div class="players-list">
+                        <span class="player-tag">Bénoît (Gardien)</span>
+                    </div>
+                </div>
+
+                <div class="category">
+                    <h3>⚡ Milieux</h3>
+                    <div class="players-list">
+                        <span class="player-tag">Hermas (Défensif)</span>
+                        <span class="player-tag">Octave (Offensif)</span>
+                        <span class="player-tag">Béni (Offensif)</span>
+                    </div>
+                </div>
+
+                <div class="category">
+                    <h3>🔥 Attaquants</h3>
+                    <div class="players-list">
+                        <span class="player-tag">Godwin (Élier-Gauche)</span>
+                        <span class="player-tag">Wilfried (Élier-Droit)</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 5: Maillots -->
+        <div id="jerseys" class="content-section">
+            <h2 style="text-align: center; margin-bottom: 30px; color: #e94560;">Sièges et Maillots des Joueurs</h2>
+            <div class="jerseys-container" id="jerseys-container"></div>
+        </div>
+
+        <footer>
+            <p>&copy; 2026 ASR-United - Salle TP1 ASR 3 | Tous droits réservés</p>
+        </footer>
+    </div>
+
+    <script>
+        // Données des joueurs
+        const allPlayers = [
+            { num: 1, nom: "ADAWOSSO", prenom: "Elie", position: "Élier-Droit" },
+            { num: 2, nom: "ADJADJA", prenom: "Elom", position: "Gardien" },
+            { num: 3, nom: "AKAKPO", prenom: "Hubert", position: "Milieu Offensif" },
+            { num: 4, nom: "AMEYIKPO", prenom: "Gédéon", position: "Stoppeur" },
+            { num: 5, nom: "BEGUEMSI", prenom: "Béni", position: "Milieu Offensif" },
+            { num: 6, nom: "AYISSOU", prenom: "Nicaise", position: "De-Point" },
+            { num: 7, nom: "DAKITSE-BENISSAN", prenom: "Isaac", position: "De-Point" },
+            { num: 8, nom: "DZEGLE", prenom: "Hope", position: "Latéral-Gauche" },
+            { num: 9, nom: "ETSE", prenom: "Geoffroy", position: "Libéro" },
+            { num: 10, nom: "GANDA", prenom: "Wilfried", position: "Élier-Droit" },
+            { num: 11, nom: "GNAGAN", prenom: "Josue", position: "Milieu Défensif" },
+            { num: 12, nom: "KEGLO", prenom: "Casmir", position: "Élier-Gauche" },
+            { num: 13, nom: "KOUSSOUGBO", prenom: "Hermas", position: "Milieu Défensif" },
+            { num: 14, nom: "OURO-AKPO", prenom: "Rayane", position: "Milieu Offensif" },
+            { num: 15, nom: "SANOU", prenom: "Bénoît", position: "Gardien" },
+            { num: 16, nom: "SOHE", prenom: "Godwin", position: "Élier-Gauche" },
+            { num: 17, nom: "TCHANI", prenom: "Bilal", position: "Latéral-Droit" },
+            { num: 18, nom: "WODOME", prenom: "Octave", position: "Milieu Offensif" }
+        ];
+
+        const starters = [
+            { name: "Elom", position: "Gardien", num: 1 },
+            { name: "Hope", position: "Latéral-Gauche", num: 19 },
+            { name: "Géoffroy", position: "Stoppeur", num: 4 },
+            { name: "Gédéon", position: "Libéro", num: 5 },
+            { name: "Bilal", position: "Latéral-Droit", num: 12 },
+            { name: "Bienvenu", position: "Offensif", num: 10 },
+            { name: "Josué", position: "Défensif", num: 6 },
+            { name: "Rayane", position: "Offensif", num: 17 },
+            { name: "Casmir", position: "Élier-Gauche", num: 7 },
+            { name: "Nicaise", position: "De-Point", num: 9 },
+            { name: "Elie", position: "Élier-Droit", num: 11 }
+        ];
+
+        // Générer les cartes joueurs
+        function generatePlayerCards() {
+            const grid = document.getElementById('players-grid');
+            allPlayers.forEach(player => {
+                const card = document.createElement('div');
+                card.className = 'player-card';
+                card.innerHTML = `
+                    <div class="player-number">${player.num}</div>
+                    <div class="player-info">
+                        <h3>${player.prenom} ${player.nom}</h3>
+                        <p>${player.position}</p>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        // Générer les maillots
+        function generateJerseys() {
+            const container = document.getElementById('jerseys-container');
+            const jerseyColors = ['#6a0dad', '#4a0080', '#7b1fa2'];
+
+            allPlayers.forEach((player, index) => {
+                const jerseyDiv = document.createElement('div');
+                jerseyDiv.className = 'jersey-display';
+                const color = jerseyColors[index % jerseyColors.length];
+
+                jerseyDiv.innerHTML = `
+                    <svg class="jersey-svg" viewBox="0 0 200 240" xmlns="http://www.w3.org/2000/svg">
+                        <!-- Corps du maillot -->
+                        <path d="M50 40 L80 20 L120 20 L150 40 L150 80 L130 90 L130 220 L70 220 L70 90 L50 80 Z" 
+                              fill="${color}" stroke="#fff" stroke-width="3"/>
+                        <!-- Manches -->
+                        <path d="M50 40 L20 70 L40 90 L70 60" fill="${color}" stroke="#fff" stroke-width="3"/>
+                        <path d="M150 40 L180 70 L160 90 L130 60" fill="${color}" stroke="#fff" stroke-width="3"/>
+                        <!-- Col -->
+                        <ellipse cx="100" cy="35" rx="20" ry="10" fill="#1a1a2e" stroke="#fff" stroke-width="2"/>
+                        <!-- Numéro -->
+                        <text x="100" y="140" text-anchor="middle" fill="#ffd700" font-size="50" font-weight="bold" font-family="Arial">${player.num}</text>
+                        <!-- Nom -->
+                        <text x="100" y="180" text-anchor="middle" fill="#fff" font-size="16" font-weight="bold" font-family="Arial">${player.prenom.toUpperCase()}</text>
+                        <!-- Bandes décoratives -->
+                        <rect x="70" y="200" width="60" height="5" fill="#ffd700"/>
+                        <rect x="85" y="210" width="30" height="5" fill="#ffd700"/>
+                    </svg>
+                    <div class="jersey-info">
+                        <h4>${player.prenom} ${player.nom}</h4>
+                        <p>#${player.num} - ${player.position}</p>
+                    </div>
+                `;
+                container.appendChild(jerseyDiv);
+            });
+        }
+
+        // Navigation par onglets
+        function showSection(sectionId) {
+            // Masquer toutes les sections
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.classList.remove('active');
+            });
+
+            // Désactiver tous les boutons
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            // Afficher la section sélectionnée
+            document.getElementById(sectionId).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // Initialisation
+        window.onload = function() {
+            generatePlayerCards();
+            generateJerseys();
+        };
+    </script>
+</body>
+</html>
